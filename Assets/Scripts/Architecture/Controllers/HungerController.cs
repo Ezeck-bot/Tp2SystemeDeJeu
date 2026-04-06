@@ -6,51 +6,55 @@ public class HungerController : MonoBehaviour
 {
     public Action<int> m_onHungerChange;
 
-    private int m_Hunger;
+    private const int MAX_HUNGER = 100;
 
-    [SerializeField] private float m_hungerTimeSpeed;
+    private int m_currentHunger;
+
+    private float m_currentHungerTimeSpeed;
 
     private HpController m_hpController;
     private ItemsController m_itemsController;
     private PlayerController m_playerController;
 
-    private PlayerTriggerItem m_playerTriggerItem;
+    [SerializeField] private PlayerScriptableObject m_playerScriptableObject;
+    [SerializeField] private HungerScriptableObject m_hungerScriptableObject;
 
     public void SetDependencies(GameController gameController)
     {
+        //initilaiser
+        m_currentHungerTimeSpeed = m_hungerScriptableObject.m_hungerTimeSpeed;
 
         m_hpController = gameController.m_hpController;
         m_itemsController = gameController.m_itemsController;
         m_playerController = gameController.m_playerController;
 
 
-        m_itemsController.m_onHungerGained += CompileHunger;
-        m_playerController.m_onSprint += ChangeTimeSpeedHunger;
+        m_itemsController.m_onFoodItemGatered += DiscreaseHunger;
 
-        m_playerTriggerItem = gameController.m_playerTriggerItem;
-        m_playerTriggerItem.m_onItemDecreaseHunger += DiscreaseHunger;
+        m_playerController.m_onSprint += ChangeTimeSpeedHunger;
     }
 
     public void OnDestroy()
     {
-        m_itemsController.m_onHungerGained -= CompileHunger;
-        m_playerController.m_onSprint -= ChangeTimeSpeedHunger;
+        m_itemsController.m_onFoodItemGatered -= DiscreaseHunger;
 
-        m_playerTriggerItem.m_onItemDecreaseHunger -= DiscreaseHunger;
+        m_playerController.m_onSprint -= ChangeTimeSpeedHunger;
     }
 
     public void ChangeTimeSpeedHunger(float m_timeSpeed)
     {
-        m_hungerTimeSpeed = m_timeSpeed;
+        m_currentHungerTimeSpeed = m_timeSpeed;
     }
 
     public void CompileHunger(int hung)
     {
 
         //toute la logique sur la compilation d'hunger se passe ici
-        m_Hunger += hung;
-        m_Hunger = Mathf.Clamp(m_Hunger, 0, 100);
-        m_onHungerChange?.Invoke(m_Hunger);
+        m_currentHunger += hung;
+
+        m_currentHunger = Mathf.Clamp(m_currentHunger, 0, MAX_HUNGER);
+
+        m_onHungerChange?.Invoke(m_currentHunger);
     }
 
     public IEnumerator IncrementHunger()
@@ -58,10 +62,10 @@ public class HungerController : MonoBehaviour
         //logique de faim
         while (true)
         {
-            yield return new WaitForSeconds(m_hungerTimeSpeed);
+            yield return new WaitForSeconds(m_currentHungerTimeSpeed);
             CompileHunger(+1);
 
-            if (m_Hunger >= 100) { 
+            if (m_currentHunger >= MAX_HUNGER) { 
                 IsHungry();
                 yield break;
             }
@@ -78,7 +82,7 @@ public class HungerController : MonoBehaviour
     {        
         CompileHunger(-discreaseHunger);
 
-        if (m_Hunger < 100)
+        if (m_currentHunger < 100)
         {
             m_hpController.StopLosingHp();
 

@@ -33,9 +33,9 @@ public class HudController : MonoBehaviour
         m_hpController.m_onDied += UpdateDied;
         m_hungerController.m_onHungerChange += UpdateHunger;
 
-        m_itemsController.m_OnNotifyItemQueteDone += OnNotifyDoneQuete;
-        m_itemsController.m_OnNotifyItemHungerDone += OnNotifyDoneHunger;
-        m_itemsController.m_OnNotifyDictionnary += OnNotifyDoneDictionnary;
+        //m_itemsController.m_OnNotifyItemQueteDone += OnNotifyDoneQuete;
+        //m_itemsController.m_OnNotifyItemHungerDone += OnNotifyDoneHunger;
+        //m_itemsController.m_OnNotifyDictionnary += OnNotifyDoneDictionnary;
     }
 
     public void OnDestroy()
@@ -46,9 +46,9 @@ public class HudController : MonoBehaviour
         m_hpController.m_onDied -= UpdateDied;
         m_hungerController.m_onHungerChange -= UpdateHunger;
 
-        m_itemsController.m_OnNotifyItemQueteDone -= OnNotifyDoneQuete;
-        m_itemsController.m_OnNotifyItemHungerDone -= OnNotifyDoneHunger;
-        m_itemsController.m_OnNotifyDictionnary -= OnNotifyDoneDictionnary;
+        //m_itemsController.m_OnNotifyItemQueteDone -= OnNotifyDoneQuete;
+        //m_itemsController.m_OnNotifyItemHungerDone -= OnNotifyDoneHunger;
+        //m_itemsController.m_OnNotifyDictionnary -= OnNotifyDoneDictionnary;
     }
 
     private void OnNotifyDoneQuete()

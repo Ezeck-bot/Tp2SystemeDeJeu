@@ -8,42 +8,40 @@ public class ExperienceController : MonoBehaviour
     public Action<int> m_onExpGained;
 
     private HpController m_hpController;
-    private PlayerTriggerItem m_playerTriggerItem;
+    private ItemsController m_itemsController;
 
     [SerializeField] private int m_currentLevel; //level actuel
     [SerializeField] private int m_currentExp;
 
     public void SetDependencies(GameController gameController)
     {
-
         m_hpController = gameController.m_hpController;
 
-        m_playerTriggerItem = gameController.m_playerTriggerItem;
-        m_playerTriggerItem.m_onItemExp += ExpGained;
+        m_itemsController = gameController.m_itemsController;
+        m_itemsController.m_onExperienceItemGatered += CompileExp;
 
     }
 
     public void OnDestroy()
     {
 
-        m_playerTriggerItem.m_onItemExp -= ExpGained;
+        m_itemsController.m_onExperienceItemGatered -= CompileExp;
     }
 
-    public void CompileExp(int exp)
+    public void CompileExp(int exp) 
     {
         //toute la logique sur la compilation d'experience se passera ici
 
         m_currentExp += exp;
 
-        if (m_currentExp == 3)
+        //si l'expérience égale 3 je le rénitiale et augmente le levelup
+        if (m_currentExp >= 3)
         {
             m_currentExp = 0;
             Levelup();
         }
 
         m_onExpGained?.Invoke(m_currentExp);
-
-        //est ce qu'on levelup ?
 
     }
 
