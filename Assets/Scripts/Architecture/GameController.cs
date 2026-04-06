@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
-
     public DialogueController m_dialogueController { get; private set; }
 
     public EnemyController m_enemyController { get; private set; }
@@ -22,11 +21,6 @@ public class GameController : MonoBehaviour
     public PlayerController m_playerController { get; private set; }
 
     public PlayerInputController m_playerInputController { get; private set; }
-
-
-    //-------
-    [SerializeField] private PlayerTriggerItem m_playerTriggerItemRef;
-    public PlayerTriggerItem m_playerTriggerItem { get; private set; }
 
 
     //-------
@@ -57,8 +51,6 @@ public class GameController : MonoBehaviour
 
         m_playerInputController = GetComponentInChildren<PlayerInputController>();
 
-        m_playerTriggerItem = m_playerTriggerItemRef;
-
         m_npcInterractable = m_npcInterractableRef;
 
         SetDependencies();
@@ -76,7 +68,7 @@ public class GameController : MonoBehaviour
 
         m_hudController.SetDependencies(this);
 
-        m_itemsController.SetDependencies(this);
+        m_itemsController.SetDependencies();
 
         m_npcController.SetDependencies(this);
 

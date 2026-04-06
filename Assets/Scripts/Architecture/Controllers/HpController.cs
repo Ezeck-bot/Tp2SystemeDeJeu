@@ -13,34 +13,31 @@ public class HpController : MonoBehaviour
     //quand un item est rammassé et quand on a level up
 
     [SerializeField] private float m_LifeTimeSpeed;
-    [SerializeField] private int m_life;
-
-    private PlayerTriggerItem m_playerTriggerItem;
+    [SerializeField] private int m_currentLife;
+    [SerializeField] private int m_maxLife;
 
     private Coroutine m_losingHpCoroutine;
 
     public void SetDependencies(GameController gameController)
     {
         m_itemController = gameController.m_itemsController;
-        m_itemController.m_onHpGained += CompileHp;
 
         m_itemController.m_onInventory += ShowInventory;
 
         m_experienceController = gameController.m_experienceController;
         m_experienceController.m_onLevelUp += IncrementMaxHp;
 
-        m_playerTriggerItem = gameController.m_playerTriggerItem;
-        m_playerTriggerItem.m_onItemLostLife += DecrementMaxHp;
+        //special item
+        m_itemController.m_onHpLostItemGatered += DecrementMaxHp;
     }
 
     public void OnDestroy()
     {
-        m_itemController.m_onHpGained -= CompileHp;
         m_experienceController.m_onLevelUp -= IncrementMaxHp;
 
-        m_itemController.m_onInventory -= ShowInventory;
+        m_itemController.m_onHpLostItemGatered += DecrementMaxHp;
 
-        m_playerTriggerItem.m_onItemLostLife -= DecrementMaxHp;
+        m_itemController.m_onInventory -= ShowInventory;
     }
 
     public void StartLosingHp()
@@ -72,12 +69,11 @@ public class HpController : MonoBehaviour
 
     public void CompileHp(int amout)
     {
-        //toute la compilation des hp se passe ici
+        m_currentLife += amout;
 
-        //calculer les nouveaux hp
-        m_life += amout;
-        m_life = Mathf.Clamp(m_life, 0, 130);
-        m_onHpChange?.Invoke(m_life); //publier
+        m_currentLife = Mathf.Clamp(m_currentLife, 0, m_maxLife);
+
+        m_onHpChange?.Invoke(m_currentLife); //publier
     }
 
     public IEnumerator LosingHpRoutine()
@@ -87,7 +83,7 @@ public class HpController : MonoBehaviour
             yield return new WaitForSeconds(m_LifeTimeSpeed);
             CompileHp(-10);
 
-            if (m_life <= 0)
+            if (m_currentLife <= 0)
             {
                 onDied();
                 m_onDied?.Invoke(true);

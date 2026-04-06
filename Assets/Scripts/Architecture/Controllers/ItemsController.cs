@@ -3,19 +3,24 @@ using System.Collections.Generic;
 using UnityEditor.VersionControl;
 using UnityEngine;
 
+
+
 public class ItemsController : MonoBehaviour
 {
+    public enum ItemType
+    {
+        Quest,
+        Food,
+        Special
+    }
 
-    //création d'action
-    public Action<int> m_onHpGained;
-    public Action<int> m_onExpGained;
-    public Action<int> m_onHungerGained;
+    public Action<int> m_onExperienceItemGatered;
+    public Action<int> m_onFoodItemGatered;
+    public Action<int> m_onHpLostItemGatered;
 
-    private PlayerController m_playerController;
+    [SerializeField] private Item[] m_items;
 
-    private PlayerTriggerItem m_playerTriggerItem;
-
-    //
+    //list
     private HashSet<string> m_NameItemExp = new HashSet<string> { };
 
     //
@@ -30,25 +35,48 @@ public class ItemsController : MonoBehaviour
     public Action m_OnNotifyItemHungerDone;
     public Action m_OnNotifyDictionnary;
 
-    public void SetDependencies(GameController gameController)
+    public void SetDependencies()
     {
-        m_playerController = gameController.m_playerController;
-
-        m_playerTriggerItem = gameController.m_playerTriggerItem;
-        m_playerTriggerItem.m_onItemExpName += CompileNameItemExp;
-
-        m_playerTriggerItem.m_onItemHungerName += CompileNameItemHunger;
-
-        m_playerTriggerItem.m_addDictionnary += CompileItemHungerValue;
+        foreach (Item item in m_items)
+        {
+            item.Init(this);
+        }
     }
 
-    public void OnDestroy()
+    public void GatherItem(string name, ItemType itemType, int amout)
     {
-        m_playerTriggerItem.m_onItemExpName -= CompileNameItemExp;
+        switch (itemType)
+        {
+            case ItemType.Quest:
+                m_onExperienceItemGatered?.Invoke(amout);
 
-        m_playerTriggerItem.m_onItemHungerName -= CompileNameItemHunger;
+                //--
+                CompileNameItemExp(name);
 
-        m_playerTriggerItem.m_addDictionnary -= CompileItemHungerValue;
+                //--
+                CompileItemHungerValue(name, amout);
+
+                break;
+            case ItemType.Food:
+                m_onFoodItemGatered?.Invoke(amout);
+
+                //--
+                CompileNameItemHunger(name);
+
+                //--
+                CompileItemHungerValue(name, amout);
+
+                break;
+            case ItemType.Special:
+                m_onExperienceItemGatered?.Invoke(amout);
+                m_onFoodItemGatered?.Invoke(amout);
+                m_onHpLostItemGatered?.Invoke(amout);
+                break;
+            default:
+                break;
+
+        }
+
     }
 
     private void CompileNameItemExp(string name)
@@ -56,9 +84,10 @@ public class ItemsController : MonoBehaviour
         if (m_NameItemExp.Add(name))
         {
             m_OnNotifyItemQueteDone?.Invoke();
-        } else
+        }
+        else
         {
-            Debug.Log("Error");
+            Debug.Log("Error hashset");
         }
     }
 
@@ -74,23 +103,15 @@ public class ItemsController : MonoBehaviour
         if (m_dic.TryAdd(name, value))
         {
             m_OnNotifyDictionnary?.Invoke();
-        } else
+        }
+        else
         {
-            Debug.Log("Error");
+            Debug.Log("Error dic");
         }
     }
 
     public void PublishInventory()
     {
         m_onInventory?.Invoke(m_dic);
-    }
-
-    public void FilterItemType()
-    {
-        //filter
-
-        m_playerController.ReceivedItem();
-
-        // choisir la bonne  action
     }
 }

@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    private const float NEW_TIME_DESCREASE_HUNGER = 0.2f;
+
     [SerializeField] private Rigidbody m_rigidBody;
     [SerializeField] private float m_moveSpeed;
 
@@ -18,6 +20,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Animator m_animator;
 
     [SerializeField] private PlayerScriptableObject m_playerScriptableObject;
+    [SerializeField] private HungerScriptableObject m_hungerScriptableObject;
 
     private bool m_isGround = true;
 
@@ -115,11 +118,11 @@ public class PlayerController : MonoBehaviour
             {
                 m_moveSpeed = m_playerScriptableObject.m_moveBoostSpeed;
 
-                m_timeSpeed = 0.2f;
+                m_timeSpeed = m_hungerScriptableObject.m_newTimeDescreaseHunger;
             }
             else
             {
-                m_timeSpeed = 2f;
+                m_timeSpeed = m_hungerScriptableObject.m_hungerTimeSpeed;
 
                 m_moveSpeed = m_playerScriptableObject.m_walkSpeed;
             }
