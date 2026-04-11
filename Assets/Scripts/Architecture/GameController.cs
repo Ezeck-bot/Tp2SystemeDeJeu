@@ -22,6 +22,8 @@ public class GameController : MonoBehaviour
 
     public PlayerInputController m_playerInputController { get; private set; }
 
+    public CraftingController m_craftingController { get; private set; }
+
 
     //-------
     [SerializeField] private NpcInterractable m_npcInterractableRef;
@@ -51,6 +53,8 @@ public class GameController : MonoBehaviour
 
         m_playerInputController = GetComponentInChildren<PlayerInputController>();
 
+        m_craftingController = GetComponentInChildren<CraftingController>();
+
         m_npcInterractable = m_npcInterractableRef;
 
         SetDependencies();
@@ -75,6 +79,8 @@ public class GameController : MonoBehaviour
         m_playerController.SetDependencies(this);
 
         m_playerInputController.SetDependencies(this);
+
+        m_craftingController.SetDependencies(this);
 
         //faire disparaître le curseur
         Cursor.lockState = CursorLockMode.Locked;

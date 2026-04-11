@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using UnityEditor.VersionControl;
 using UnityEngine;
 
-
-
 public class ItemsController : MonoBehaviour
 {
     public enum ItemType
     {
         Quest,
         Food,
-        Special
+        Special,
+        Craftable
     }
 
     public Action<int> m_onExperienceItemGatered;
@@ -48,29 +47,51 @@ public class ItemsController : MonoBehaviour
         switch (itemType)
         {
             case ItemType.Quest:
+                AudioManager.Instance.PlayAudio(SoundID.ITEMEXP);
+
+                //--
                 m_onExperienceItemGatered?.Invoke(amout);
 
                 //--
                 CompileNameItemExp(name);
 
                 //--
-                CompileItemHungerValue(name, amout);
+                CompileItemDictionnary(name, amout);
+
+                //--
 
                 break;
             case ItemType.Food:
+                AudioManager.Instance.PlayAudio(SoundID.ITEMLIFE);
+
+                //--
                 m_onFoodItemGatered?.Invoke(amout);
 
                 //--
                 CompileNameItemHunger(name);
 
                 //--
-                CompileItemHungerValue(name, amout);
+                CompileItemDictionnary(name, amout);
+
+                //--
 
                 break;
             case ItemType.Special:
+                //--
+                AudioManager.Instance.PlayAudio(SoundID.ITEMSPECIAL);
+
                 m_onExperienceItemGatered?.Invoke(amout);
                 m_onFoodItemGatered?.Invoke(amout);
                 m_onHpLostItemGatered?.Invoke(amout);
+
+
+                break;
+            case ItemType.Craftable:
+                //--
+                AudioManager.Instance.PlayAudio(SoundID.ITEMCRAFTING);
+
+                CompileItemDictionnary(name, amout);
+
                 break;
             default:
                 break;
@@ -98,7 +119,7 @@ public class ItemsController : MonoBehaviour
         m_OnNotifyItemHungerDone?.Invoke();
     }
 
-    private void CompileItemHungerValue(string name, int value)
+    public void CompileItemDictionnary(string name, int value)
     {
         if (m_dic.TryAdd(name, value))
         {
@@ -113,5 +134,18 @@ public class ItemsController : MonoBehaviour
     public void PublishInventory()
     {
         m_onInventory?.Invoke(m_dic);
+    }
+
+    //SECTION CRAFTING
+    //Savoir si l'item est dans le dictionnaire
+    public bool HasItem(string name)
+    {
+        return m_dic.ContainsKey(name);
+    }
+
+    //Supprimer l'item
+    public bool HasDeleteItem(string name)
+    {
+        return m_dic.Remove(name);
     }
 }

@@ -26,6 +26,8 @@ public class NpcController : MonoBehaviour
 
     public void TryInteract()
     {
+        //--
+        AudioManager.Instance.PlayAudio(SoundID.INTERACTNPC);
 
         if (m_dialogueController.IsDialogueOpen())
         {
