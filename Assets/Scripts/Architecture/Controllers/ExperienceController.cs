@@ -10,7 +10,7 @@ public class ExperienceController : MonoBehaviour
     private HpController m_hpController;
     private ItemsController m_itemsController;
 
-    [SerializeField] private int m_currentLevel; //level actuel
+    [SerializeField] public int m_currentLevel; //level actuel
     [SerializeField] private int m_currentExp;
 
     public void SetDependencies(GameController gameController)

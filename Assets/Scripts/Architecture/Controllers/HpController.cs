@@ -13,7 +13,7 @@ public class HpController : MonoBehaviour
     //quand un item est rammassé et quand on a level up
 
     [SerializeField] private float m_LifeTimeSpeed;
-    [SerializeField] private int m_currentLife;
+    [SerializeField] public int m_currentLife;
     [SerializeField] private int m_maxLife;
 
     private Coroutine m_losingHpCoroutine;
