@@ -14,6 +14,8 @@ public class PlayerInputController : MonoBehaviour
 
     public Action<bool> m_onChangeInteract;
 
+    public Action<bool> m_onChangeCrafting;
+
     //inventory
 
     public void SetDependencies(GameController gameController)
@@ -65,6 +67,26 @@ public class PlayerInputController : MonoBehaviour
         else if (context.canceled)
         {
             m_onChangeInteract?.Invoke(false);
+        }
+    }
+
+    public void OnCrafting(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            m_onChangeCrafting?.Invoke(true);
+        }
+        else if (context.canceled)
+        {
+            m_onChangeCrafting?.Invoke(false);
+        }
+    }
+
+    public void OnPause(InputAction.CallbackContext context)
+    {
+        if (context.started)
+        {
+            AudioManager.Instance.ToggleVolumeUI();
         }
     }
 }

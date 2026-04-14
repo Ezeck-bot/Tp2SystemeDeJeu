@@ -30,9 +30,12 @@ public class PlayerController : MonoBehaviour
 
     private PlayerInputController m_input;
     private NpcController m_npc;
+    private CraftingController m_crafting;
 
     public Action<float> m_onSprint;
     private float m_timeSpeed;
+
+    //public bool m_isMoving => m_rigidBody.linearVelocity != Vector3.zero;
 
     public void SetDependencies(GameController gameController)
     {
@@ -42,10 +45,13 @@ public class PlayerController : MonoBehaviour
 
         m_npc = gameController.m_npcController;
 
+        m_crafting = gameController.m_craftingController;
+
         m_input.m_onChangeMovement += Move;
         m_input.m_onChangeJump += Jump;
         m_input.m_onChangeRunning += Sprint;
         m_input.m_onChangeInteract += Interactable;
+        m_input.m_onChangeCrafting += ActiveCrafting;
     }
 
     public void OnDestroy()
@@ -54,6 +60,7 @@ public class PlayerController : MonoBehaviour
         m_input.m_onChangeJump -= Jump;
         m_input.m_onChangeRunning -= Sprint;
         m_input.m_onChangeInteract -= Interactable;
+        m_input.m_onChangeCrafting -= ActiveCrafting;
     }
 
     private void FixedUpdate()
@@ -95,7 +102,14 @@ public class PlayerController : MonoBehaviour
             velocity.y = m_rigidBody.linearVelocity.y;
 
             m_rigidBody.linearVelocity = velocity;
+
+            if (m_rigidBody.linearVelocity != Vector3.zero)
+            {
+                //s'il bouge on annule toujours
+                m_crafting.ActiveCrafting(false);
+            }
         }
+
     }
 
     public void Jump(bool is_jump)
@@ -104,6 +118,7 @@ public class PlayerController : MonoBehaviour
         {
             m_isGround = false;
             m_animator.SetBool("isJump", true);
+            AudioManager.Instance.PlayAudio(SoundID.JUMP);
             m_rigidBody.linearVelocity = new Vector3(m_rigidBody.linearVelocity.x, m_jumpForce, m_rigidBody.linearVelocity.z);
         }
     }
@@ -116,6 +131,8 @@ public class PlayerController : MonoBehaviour
 
             if (is_sprint)
             {
+                AudioManager.Instance.PlayAudio(SoundID.RUN);
+
                 m_moveSpeed = m_playerScriptableObject.m_moveBoostSpeed;
 
                 m_timeSpeed = m_hungerScriptableObject.m_newTimeDescreaseHunger;
@@ -135,9 +152,14 @@ public class PlayerController : MonoBehaviour
         if (m_isGround)
         {
             m_npc.TryInteract();
-        }else
+        }
+    }
+
+    public void ActiveCrafting(bool is_crafting)
+    {
+        if (m_isGround && m_rigidBody.linearVelocity == Vector3.zero)
         {
-            Debug.Log("NotInteract");
+            m_crafting.ActiveCrafting(is_crafting);
         }
     }
 }

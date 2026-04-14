@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: a0e62a41ce590e247876e880b6d04b39
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 198754
+  packageName: Free HQ Stick Grenade
+  packageVersion: 1.0
+  assetPath: Assets/StickGrenadeModel/Assets/Scenes/DemoScene/LightingData.asset
+  uploadId: 442014
