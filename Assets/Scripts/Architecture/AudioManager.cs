@@ -19,7 +19,7 @@ public class AudioManager : MonoBehaviour
     public static AudioManager Instance { get; private set; }
 
     [Header("SFX")]
-    [SerializeField] private AudioClip[] m_sfxClips; // Taille 8, assigné dans l'Inspector
+    [SerializeField] private AudioClip[] m_sfxClips;
     private AudioSource m_sfxSource;
     private float m_sfxVolume;
 
